@@ -1,0 +1,25 @@
+{
+	"name": "clevis/geolocation-base",
+	"description": "Base components for geolocation in Nette applications",
+	"homepage": "http://clevis.cz",
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Clevis s.r.o.",
+			"homepage": "http://clevis.cz"
+		}
+	],
+
+	"require": {
+		"php": ">= 5.3.7"
+	},
+	"require-dev": {
+		"nette/tester": "@dev",
+		"nette/nette": "@dev",
+		"dg/dibi": "@dev"
+	},
+
+	"autoload": {
+		"classmap": ["src/"]
+	}
+}

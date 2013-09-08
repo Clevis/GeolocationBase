@@ -7,8 +7,7 @@ use Nette\InvalidArgumentException;
 use Clevis\Geolocation\Position;
 use Clevis\Geolocation\Rectangle;
 use Clevis\Geolocation\Address;
-use Clevis\Geolocation\IAddressService;
-use Clevis\Geolocation\IPositionService;
+use Clevis\Geolocation\IGeocodingService;
 use Clevis\Geolocation\ConnectionException;
 use Clevis\Geolocation\InvalidStatusException;
 use Clevis\Geolocation\InvalidResponseException;
@@ -19,7 +18,7 @@ use Clevis\Geolocation\InvalidResponseException;
  *
  * "Use of the Google Geocoding API is subject to a query limit of 2,500 requests per day."
  */
-class GeocodingClient extends Object implements IAddressService, IPositionService
+class GeocodingClient extends Object implements IGeocodingService
 {
 
 	const GOOGLE_URL = 'http://maps.googleapis.com/maps/api/geocode/json?';
@@ -30,9 +29,10 @@ class GeocodingClient extends Object implements IAddressService, IPositionServic
 	 *
 	 * @param Address|string
 	 * @param array
+	 * @param bool
 	 * @return Position|NULL
 	 */
-	public function getPosition($address, $options = array())
+	public function getPosition($address, $options = array(), $fullResult = FALSE)
 	{
 		// address
 		if ($address instanceof Address)
@@ -70,7 +70,7 @@ class GeocodingClient extends Object implements IAddressService, IPositionServic
 
 		$result = $this->getResult($address, $options);
 
-		return $result->getPosition();
+		return $fullResult ? $result : $result->getPosition();
 	}
 
 	/**
@@ -78,13 +78,45 @@ class GeocodingClient extends Object implements IAddressService, IPositionServic
 	 *
 	 * @param Position
 	 * @param array
+	 * @param bool
 	 * @return Address|NULL
 	 */
-	public function getAddress(Position $position, $options = array())
+	public function getAddress(Position $position, $options = array(), $fullResult = FALSE)
 	{
 		$result = $this->getResult($position, $options);
 
-		return $result->getAddress();
+		return $fullResult ? $result : $result->getAddress();
+	}
+
+	/**
+	 * Get both position and address for given query
+	 *
+	 * @param string|Address|Position
+	 * @param array
+	 * @return array (Position|NULL, Address|NULL)
+	 */
+	public function getPositionAndAddress($query, $options = array())
+	{
+		if ($query instanceof Position)
+		{
+			/** @var GeocodingResult $result */
+			$result = $this->getAddress($query, $options, TRUE);
+			if ($result)
+			{
+				return array($result->getPosition(), $result->getAddress());
+			}
+		}
+		else
+		{
+			/** @var GeocodingResult $result */
+			$result = $this->getPosition($query, $options, TRUE);
+			if ($result)
+			{
+				return array($result->getPosition(), $result->getAddress());
+			}
+		}
+
+		return array(NULL, NULL);
 	}
 
 	/**

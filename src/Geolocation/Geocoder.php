@@ -20,17 +20,11 @@ class Geocoder extends Object
 		OPTION_BOUNDS = 'bounds',
 		OPTION_FILTERS = 'filters';
 
-	/** @var IPositionService */
-	private $positionService;
+	/** @var IGeocodingService */
+	private $geocodingService;
 
-	/** @var IAddressService */
-	private $addressService;
-
-	/** @var IPositionCache */
-	private $positionCache;
-
-	/** @var IAddressCache */
-	private $addressCache;
+	/** @var IGeocodingCache */
+	private $geocodingCache;
 
 	/** @var bool whether the location comes from a device with loc. sensor */
 	public $sensor = FALSE;
@@ -48,22 +42,14 @@ class Geocoder extends Object
 	private $filters;
 
 
-	public function __construct(
-		IPositionService $positionService,
-		IAddressService $addressService
-	) {
-		$this->positionService = $positionService;
-		$this->addressService = $addressService;
+	public function __construct(IGeocodingService $geocodingService)
+	{
+		$this->geocodingService = $geocodingService;
 	}
 
-	public function setPositionCache(IPositionCache $positionCache)
+	public function setGeocodingCache(IGeocodingCache $geocodingCache)
 	{
-		$this->positionCache = $positionCache;
-	}
-
-	public function setAddressCache(IAddressCache $addressCache)
-	{
-		$this->addressCache = $addressCache;
+		$this->geocodingCache = $geocodingCache;
 	}
 
 	public function setBounds(Rectangle $bounds)
@@ -83,26 +69,26 @@ class Geocoder extends Object
 	 * @return Position|NULL
 	 * @throws GeocodingException
 	 */
-	public function getPositionFromAddress($address)
+	public function getPositionFromAddress($query)
 	{
 		$options = $this->getOptions();
 
-		if ($this->positionCache)
+		if ($this->geocodingCache)
 		{
-			$result = $this->positionCache->getPosition($address, $options);
-			if ($result)
+			$position = $this->geocodingCache->getPosition($query, $options);
+			if ($position)
 			{
-				return $result;
+				return $position;
 			}
 		}
 
-		$result = $this->positionService->getPosition($address, $options);
-		if ($result && $this->positionCache)
+		list($position, $address) = $this->geocodingService->getPositionAndAddress($query, $options);
+		if ($position && $this->geocodingCache)
 		{
-			$this->positionCache->savePosition($address, $result, $options);
+			$this->geocodingCache->saveResult($position, $address, $query, $options);
 		}
 
-		return $result;
+		return $position;
 	}
 
 	/**
@@ -112,26 +98,26 @@ class Geocoder extends Object
 	 * @return Address|NULL
 	 * @throws GeocodingException
 	 */
-	public function getAddressFromPosition(Position $position)
+	public function getAddressFromPosition(Position $query)
 	{
 		$options = $this->getOptions();
 
-		if ($this->addressCache)
+		if ($this->geocodingCache)
 		{
-			$result = $this->addressCache->getAddress($position, $options);
+			$result = $this->geocodingCache->getAddress($query, $options);
 			if ($result)
 			{
 				return $result;
 			}
 		}
 
-		$result = $this->addressService->getAddress($position, $options);
-		if ($result && $this->addressCache)
+		list($position, $address) = $this->geocodingService->getPositionAndAddress($query, $options);
+		if ($address && $this->geocodingCache)
 		{
-			$this->addressCache->saveAddress($position, $result, $options);
+			$this->geocodingCache->saveResult($position, $address, $query, $options);
 		}
 
-		return $result;
+		return $address;
 	}
 
 	/**

@@ -237,7 +237,7 @@ class Position extends Object
 
 	private function setDegrees($lat, $lon)
 	{
-		if (!is_numeric($lat) || $lat > 90 || $lon < -90)
+		if (!is_numeric($lat) || $lat > 90 || $lat < -90)
 		{
 			throw new InvalidArgumentException("Invalid latitude given: '$lat'. Must be a number between -90 and 90.");
 		}

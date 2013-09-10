@@ -63,6 +63,11 @@ class Address extends Object
 	public $partialMatch;
 
 
+	public function __toString()
+	{
+		return $this->getFormatedAddress();
+	}
+
 	/**
 	 * @param string
 	 */

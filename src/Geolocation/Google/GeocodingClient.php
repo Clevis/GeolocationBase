@@ -68,7 +68,7 @@ class GeocodingClient extends Object implements IGeocodingService
 
 		$options['sensor'] = FALSE;
 
-		$result = $this->getResult($address, $options);
+		$result = $this->getResponse($address, $options);
 
 		return $fullResult ? $result : $result->getPosition();
 	}
@@ -83,7 +83,7 @@ class GeocodingClient extends Object implements IGeocodingService
 	 */
 	public function getAddress(Position $position, $options = array(), $fullResult = FALSE)
 	{
-		$result = $this->getResult($position, $options);
+		$result = $this->getResponse($position, $options);
 
 		return $fullResult ? $result : $result->getAddress();
 	}
@@ -99,20 +99,20 @@ class GeocodingClient extends Object implements IGeocodingService
 	{
 		if ($query instanceof Position)
 		{
-			/** @var GeocodingResult $result */
-			$result = $this->getAddress($query, $options, TRUE);
-			if ($result)
+			/** @var GeocodingResponse $response */
+			$response = $this->getAddress($query, $options, TRUE);
+			if ($response)
 			{
-				return array($result->getPosition(), $result->getAddress());
+				return array($response->getPosition(), $response->getAddress());
 			}
 		}
 		else
 		{
-			/** @var GeocodingResult $result */
-			$result = $this->getPosition($query, $options, TRUE);
-			if ($result)
+			/** @var GeocodingResponse $response */
+			$response = $this->getPosition($query, $options, TRUE);
+			if ($response)
 			{
-				return array($result->getPosition(), $result->getAddress());
+				return array($response->getPosition(), $response->getAddress());
 			}
 		}
 
@@ -123,9 +123,9 @@ class GeocodingClient extends Object implements IGeocodingService
 	 * Get a full geocoding query result
 	 *
 	 * @param string|Address|Position
-	 * @return GeocodingResult
+	 * @return GeocodingResponse
 	 */
-	public function getResult($query, $options)
+	public function getResponse($query, $options)
 	{
 		if ($query instanceof Position)
 		{
@@ -149,6 +149,10 @@ class GeocodingClient extends Object implements IGeocodingService
 	 */
 	private function query(array $options)
 	{
+		if (isset($options['sensor']))
+		{
+			$options['sensor'] = $options['sensor'] ? 'true' : 'false';
+		}
 		$url = self::GOOGLE_URL . http_build_query($options);
 
 		$curl = curl_init();
@@ -171,7 +175,7 @@ class GeocodingClient extends Object implements IGeocodingService
 			throw new InvalidStatusException("Geocoding query failed (status: '{$payload->status}').");
 		}
 
-		return new GeocodingResult($this, $payload->results, $options);
+		return new GeocodingResponse($this, $payload->results, $options);
 	}
 
 }

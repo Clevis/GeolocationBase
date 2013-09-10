@@ -14,7 +14,7 @@ use StdClass;
  *
  * @author Vojtěch Dobeš
  */
-class GeocodingResult extends Object
+class GeocodingResponse extends Object
 {
 
 	static $countriesWithStates = array(
@@ -71,7 +71,7 @@ class GeocodingResult extends Object
 					$type = $t;
 				}
 			}
-			elseif (is_numeric($component->longName))
+			elseif (is_numeric($component->long_name))
 			{
 				$type = 'house_number';
 			}
@@ -99,8 +99,8 @@ class GeocodingResult extends Object
 			$offset = 1;
 			if (isset($c['administrative_area_level_1']))
 			{
-				$address->state     = $c['administrative_area_level_1']->longName;
-				$address->stateCode = $c['administrative_area_level_1']->shortName;
+				$address->state     = $c['administrative_area_level_1']->long_name;
+				$address->stateCode = $c['administrative_area_level_1']->short_name;
 				if ($address->state === $address->stateCode)
 				{
 					$address->stateCode = NULL;
@@ -111,8 +111,8 @@ class GeocodingResult extends Object
 		// region/county
 		if (isset($c['administrative_area_level_' . (1 + $offset)]))
 		{
-			$address->region     = $c['administrative_area_level_' . (1 + $offset)]->longName;
-			$address->regionCode = $c['administrative_area_level_' . (1 + $offset)]->shortName;
+			$address->region     = $c['administrative_area_level_' . (1 + $offset)]->long_name;
+			$address->regionCode = $c['administrative_area_level_' . (1 + $offset)]->short_name;
 			if ($address->region === $address->regionCode)
 			{
 				$address->regionCode = NULL;
@@ -216,7 +216,7 @@ class GeocodingResult extends Object
 	 */
 	public function getCountry()
 	{
-		return isset($this->components['country']) ? $this->components['country']->longName : NULL;
+		return isset($this->components['country']) ? $this->components['country']->long_name : NULL;
 	}
 
 	/**
@@ -226,7 +226,7 @@ class GeocodingResult extends Object
 	 */
 	public function getCountryCode()
 	{
-		return isset($this->components['country']) ? $this->components['country']->shortName : NULL;
+		return isset($this->components['country']) ? $this->components['country']->short_name : NULL;
 	}
 
 	/**

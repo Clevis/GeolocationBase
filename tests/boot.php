@@ -21,7 +21,7 @@ require __DIR__ . '/../src/Geolocation/Geocoder.php';
 
 require __DIR__ . '/../src/Geolocation/Google/ElevationClient.php';
 require __DIR__ . '/../src/Geolocation/Google/GeocodingClient.php';
-require __DIR__ . '/../src/Geolocation/Google/GeocodingResult.php';
+require __DIR__ . '/../src/Geolocation/Google/GeocodingResponse.php';
 
 
 Nette\Diagnostics\Debugger::$logDirectory = __DIR__ . '/output';

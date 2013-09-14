@@ -258,7 +258,7 @@ class GeocodingResponse extends Object
 			) {
 				return NULL;
 			}
-			return new $class($client, array($alternative));
+			return new $class($client, array($alternative), $this->options);
 		}, $this->alternatives), function ($alternative) { return (bool) $alternative;});
 	}
 

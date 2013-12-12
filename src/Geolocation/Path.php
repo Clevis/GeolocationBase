@@ -9,7 +9,7 @@ class Path extends Object
 {
 
 	/** @var Position[] */
-	private $points;
+	protected $points;
 
 	/**
 	 * @param Position[]

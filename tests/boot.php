@@ -10,6 +10,7 @@ require __DIR__ . '/../src/Geolocation/interfaces/IGeocodingCache.php';
 require __DIR__ . '/../src/Geolocation/exceptions.php';
 
 require __DIR__ . '/../src/Geolocation/Position.php';
+require __DIR__ . '/../src/Geolocation/Path.php';
 require __DIR__ . '/../src/Geolocation/Circle.php';
 require __DIR__ . '/../src/Geolocation/Rectangle.php';
 require __DIR__ . '/../src/Geolocation/Address.php';

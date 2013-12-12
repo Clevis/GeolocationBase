@@ -116,7 +116,9 @@ class Position extends Object
 	 */
 	public function calculateDistanceFrom(Position $position)
 	{
-		///
+		// cos(angle) = dot(a,b) / (length(a) * length(b))
+		// length is already normalized to 1
+		return $this->planetRadius * acos($this->dotProduct($position));
 	}
 
 
@@ -317,6 +319,12 @@ class Position extends Object
 		$this->longitude = atan2($this->y, $this->x);
 		$hyp = sqrt($this->x * $this->x + $this->y * $this->y);
 		$this->latitude = atan2($this->z, $hyp);
+	}
+
+
+	private function dotProduct($vector)
+	{
+		return $this->x * $vector->x + $this->y * $vector->y + $this->z * $vector->z;
 	}
 
 }

@@ -39,7 +39,7 @@ class Path extends Object
 	}
 
 	/**
-	 * @return float [km]
+	 * @return float [m]
 	 */
 	public function calculateLength()
 	{

@@ -112,13 +112,21 @@ class Position extends Object
 
 	/**
 	 * @param Position
-	 * @return float [km]
+	 * @return float [m]
 	 */
 	public function calculateDistanceFrom(Position $position)
 	{
+		if ($this->x === NULL)
+		{
+			$this->lonLatToVector();
+		}
+		if ($position->x === NULL)
+		{
+			$position->lonLatToVector();
+		}
 		// cos(angle) = dot(a,b) / (length(a) * length(b))
-		// length is already normalized to 1
-		return $this->planetRadius * acos($this->dotProduct($position));
+		// vector length is already normalized to 1
+		return $this->planetRadius * 1000 * acos($this->dotProduct($position));
 	}
 
 

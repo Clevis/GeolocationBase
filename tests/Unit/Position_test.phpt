@@ -45,7 +45,7 @@ Assert::same("50°1'57.8\"N\xC2\xA015°46'56.21\"E", (string) $pos);
 // calculateDistanceFrom
 $a = new Position(1, 0, 0);
 $b = new Position(-1, 0, 0); // 180°
-Assert::same(round(20015.08679602, 8), round($a->calculateDistanceFrom($b), 8));
+Assert::same(round(20015086.79602, 5), round($a->calculateDistanceFrom($b), 5));
 
 $b = new Position(0, 1, 0); // 90°
-Assert::same(round(10007.54339801, 8), round($a->calculateDistanceFrom($b), 8));
+Assert::same(round(10007543.39801, 5), round($a->calculateDistanceFrom($b), 5));

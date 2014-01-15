@@ -174,12 +174,6 @@ class GeocodingClient extends Object implements IGeocodingService
 
 		$curl = curl_init();
 
-		/*
-
-		echo "$url\n";
-		curl_setopt($curl, CURLOPT_PROXY, '192.168.56.6:8888');
-		// */
-
 		curl_setopt($curl, CURLOPT_HTTPHEADER, Array('Content-Type: application/json; charset=utf-8'));
 
 		if ($this->user_name) {
@@ -191,6 +185,7 @@ class GeocodingClient extends Object implements IGeocodingService
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_URL, $url);
 		$response = curl_exec($curl);
+		$response_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
 
 		if (!$response)
@@ -209,12 +204,12 @@ class GeocodingClient extends Object implements IGeocodingService
 				throw new InvalidResponseException("Unable to parse response from geocoding API.");
 			}
 		}
-		if ($payload->status != 'OK')
+		if ($response_code != 200)
 		{
 			throw new InvalidStatusException("Geocoding query failed (status: '{$payload->status}').");
 		}
 
-		return new GeocodingResponse($this, $payload->results, $options);
+		return new GeocodingResponse($this, $payload, $options);
 	}
 
 }

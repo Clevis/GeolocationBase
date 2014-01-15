@@ -137,13 +137,13 @@ class GeocodingClient extends Object implements IGeocodingService
 		if ($query instanceof Position)
 		{
 			$options['lat'] = $query->latitude;
-			$options['lng'] = $query->longitude;
+			$options['lon'] = $query->longitude; // NB: not "lng"!
 		}
 		else
 		{
 			$options['lat'] = null;
-			$options['lng'] = null;
-			$options['q'] = ((string) $query);
+			$options['lon'] = null;
+			$options['q'] = ((string) $query); // NB: not "address"!
 		}
 
 		return $this->query($options);
@@ -159,7 +159,7 @@ class GeocodingClient extends Object implements IGeocodingService
 	 */
 	protected function query(array $options)
 	{
-		if ($options['lat'] && $options['lng']) {
+		if ($options['lat'] && $options['lon']) {
 			$method = 'reverse';
 		} else {
 			$method = 'search';
@@ -167,7 +167,6 @@ class GeocodingClient extends Object implements IGeocodingService
 
 		$options['format'] = 'json';
 		$options['addressdetails'] = 1;
-		// $options['limit'] = 1; // do we need alternatives?
 		$options['email'] = $this->email;
 
 		$url = $this->base_url . $method . '?' . http_build_query($options);

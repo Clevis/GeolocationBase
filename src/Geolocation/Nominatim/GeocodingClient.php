@@ -141,7 +141,9 @@ class GeocodingClient extends Object implements IGeocodingService
 		}
 		else
 		{
-			$options['address'] = (string) $query;
+			$options['lat'] = null;
+			$options['lng'] = null;
+			$options['q'] = ((string) $query);
 		}
 
 		return $this->query($options);
@@ -171,11 +173,20 @@ class GeocodingClient extends Object implements IGeocodingService
 		$url = $this->base_url . $method . '?' . http_build_query($options);
 
 		$curl = curl_init();
+
+		/*
+
+		echo "$url\n";
+		curl_setopt($curl, CURLOPT_PROXY, '192.168.56.6:8888');
+		// */
+
+		curl_setopt($curl, CURLOPT_HTTPHEADER, Array('Content-Type: application/json; charset=utf-8'));
+
 		if ($this->user_name) {
-			curl_setopt($this->curl, CURLOPT_USERPWD, $this->user_name . ':' . $this->user_pwd);
+			curl_setopt($curl, CURLOPT_USERPWD, $this->user_name . ':' . $this->user_pwd);
 		}
 		if ($this->ua) {
-			curl_setopt($this->curl, CURLOPT_USERAGENT,$this->ua);
+			curl_setopt($curl, CURLOPT_USERAGENT,$this->ua);
 		}
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_URL, $url);
@@ -189,7 +200,14 @@ class GeocodingClient extends Object implements IGeocodingService
 		$payload = @json_decode($response); // @ - intentionally to escalate error to exception
 		if (!$payload)
 		{
-			throw new InvalidResponseException("Unable to parse response from geocoding API.");
+			if ((is_array($payload) && (count($payload) == 0)))
+			{
+				throw new InvalidStatusException("Geocoding query failed (no results).");
+
+			} else
+			{
+				throw new InvalidResponseException("Unable to parse response from geocoding API.");
+			}
 		}
 		if ($payload->status != 'OK')
 		{

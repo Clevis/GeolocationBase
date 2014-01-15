@@ -192,6 +192,11 @@ class GeocodingClient extends Object implements IGeocodingService
 			throw new ConnectionException("Unable to connect to geocoding API.");
 		}
 		$payload = @json_decode($response); // @ - intentionally to escalate error to exception
+
+		if ($payload && !is_array($payload)) {
+			$payload = array($payload);
+		}
+
 		if (!$payload)
 		{
 			if ((is_array($payload) && (count($payload) == 0)))

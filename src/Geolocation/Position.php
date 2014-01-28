@@ -330,9 +330,27 @@ class Position extends Object
 	}
 
 
-	private function dotProduct($vector)
+	/**
+	 * Calculates a dot product of self and another vector
+	 *
+	 * @param Position
+	 * @return float
+	 */
+	private function dotProduct(Position $vector)
 	{
-		return $this->x * $vector->x + $this->y * $vector->y + $this->z * $vector->z;
+		$dp = $this->x * $vector->x + $this->y * $vector->y + $this->z * $vector->z;
+
+		// fixes rounding error on 16th place, which can cause a NAN later
+		if ($dp > 1.000000000000000)
+		{
+			$dp = 1.0;
+		}
+		elseif ($dp < -1.0000000000000000)
+		{
+			$dp = -1.0;
+		}
+
+		return $dp;
 	}
 
 }

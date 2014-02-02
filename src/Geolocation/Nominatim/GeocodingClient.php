@@ -25,6 +25,8 @@ use Clevis\Geolocation\InvalidResponseException;
  * Own instances of nominatim are not subject to usage restrictions (except for the license, 'course).
  *
  * May be overridden for different nominatim instances (see $base_url)
+ * 
+ * @author Jan Martinec
  */
 class GeocodingClient extends Object implements IGeocodingService
 {

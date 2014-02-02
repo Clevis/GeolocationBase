@@ -17,7 +17,8 @@ namespace `Clevis\Geolocation`
 #### geocoding:
  - Address
  - Geocoder
- - Google\GeocodingApiClient ( *IGeocodingService*, *IReverseGeocodingService* )
+ - Google\GeocodingClient ( *IGeocodingService*, *IReverseGeocodingService* )
+ - Nominatim\GeocodingClient ( *IGeocodingService*, *IReverseGeocodingService* )
  - Google\ElevationApiClient ( *IElevationService* )
 
 #### tests:

@@ -19,3 +19,6 @@ namespace `Clevis\Geolocation`
  - Geocoder
  - Google\GeocodingApiClient ( *IGeocodingService*, *IReverseGeocodingService* )
  - Google\ElevationApiClient ( *IElevationService* )
+
+#### tests:
+First get a nette tester via `composer update --prefer-dist`. Then run the tests using `vendor/bin/tester tests/` or similar way on Windows.

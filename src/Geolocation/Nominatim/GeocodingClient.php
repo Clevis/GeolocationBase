@@ -46,8 +46,6 @@ class GeocodingClient extends Object implements IGeocodingService
 	/** @var string  User-Agent string; required! */
 	protected $ua = 'ReKolaSMS http://rekola.cz/ info@rekola.cz 1.0 2014-01-07';
 
-	protected $munge_address = true; // Nominatim has problems when ZIP cosdes are included, or city parts ("Praha 3"); this toggle attempts to strip such extraneous info
-
 	/**
 	 * allows use of other nominatims
 	 */
@@ -87,10 +85,7 @@ class GeocodingClient extends Object implements IGeocodingService
 			unset($options['bounds']);
 		}
 
-		if ($this->munge_address) {
-			$address = $this->mungeAddress($address);
-		}
-
+		$address = $this->stripAddress($address);
 
 		$result = $this->getResponse($address, $options);
 
@@ -240,14 +235,26 @@ class GeocodingClient extends Object implements IGeocodingService
 		return new GeocodingResponse($this, $payload, $options);
 	}
 
-	protected function mungeAddress($address) {
-		$address = preg_replace('/\d{3}\W*\d{2}/','',$address); // no ZIP codes -
+	/**
+	 * Nominatim has problems when ZIP codes or city parts are included ("Praha 3").
+	 * This function strips such extraneous info.
+	 * @todo is that a good idea? Aren't we stripping valuabe information?
+	 *
+	 * @param $address
+	 * @return mixed
+	 */
+	protected function stripAddress($address)
+	{
+		$address = preg_replace('/\d{3}\W*\d{2}/', '', $address); // no ZIP codes
 		$matched = 0;
-		do {
+		do
+		{
 			$address = preg_replace('/,([^\d]*?)([\d]+)/',',\\1',$address, -1, $matched);
-		} while ($matched > 0);
-		$address = preg_replace('/(Praha|Brno|Olomouc|Plzeň|Plzen|Ostrava) +\d+/',',\\1',$address, -1, $matched);
-		$address = preg_replace('/,? +,?/',' ',$address);
+		}
+		while ($matched > 0);
+
+		$address = preg_replace('/(Praha|Brno|Olomouc|Plzeň|Plzen|Ostrava) +\d+/',', \\1', $address, -1, $matched);
+		$address = preg_replace('/,? +,?/', ' ', $address);
 
 		return $address;
 	}

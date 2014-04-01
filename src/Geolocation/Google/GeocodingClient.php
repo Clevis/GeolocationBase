@@ -60,7 +60,7 @@ class GeocodingClient extends Object implements IGeocodingService
 			foreach ($options['filters'] as $key => $value)
 			{
 				// todo: translate keys
-				$components = "$key:$value";
+				$components[] = "$key:$value";
 			}
 			$options['components'] = implode('|', $components);
 			unset($options['filters']);

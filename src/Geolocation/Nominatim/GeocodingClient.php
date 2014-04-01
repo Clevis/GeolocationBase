@@ -37,6 +37,8 @@ class GeocodingClient extends Object implements IGeocodingService
 	protected $email = 'info@rekola.cz'; // needed in case of capacity problems (not in case of own instance)
 	protected $ua = 'ReKolaSMS http://rekola.cz/ info@rekola.cz 1.0 2014-01-07'; // User-Agent string; required!
 
+	protected $munge_address = true; // Nominatim has problems when ZIP cosdes are included, or city parts ("Praha 3"); this toggle attempts to strip such extraneous info
+
 	/**
 	 * allows use of other nominatims
 	 */
@@ -74,6 +76,11 @@ class GeocodingClient extends Object implements IGeocodingService
 			$options['bounded'] = 1;
 			unset($options['bounds']);
 		}
+
+		if ($this->munge_address) {
+			$address = $this->mungeAddress($address);
+		}
+
 
 		$result = $this->getResponse($address, $options);
 
@@ -216,4 +223,15 @@ class GeocodingClient extends Object implements IGeocodingService
 		return new GeocodingResponse($this, $payload, $options);
 	}
 
+	protected function mungeAddress($address) {
+		$address = preg_replace('/\d{3}\W*\d{2}/','',$address); // no ZIP codes -
+		$matched = 0;
+		do {
+			$address = preg_replace('/,([^\d]*?)([\d]+)/',',\\1',$address, -1, $matched);
+		} while ($matched > 0);
+		$address = preg_replace('/(Praha|Brno|Olomouc|Plzeň|Plzen|Ostrava) +\d+/',',\\1',$address, -1, $matched);
+		$address = preg_replace('/,? +,?/',' ',$address);
+
+		return $address;
+	}
 }

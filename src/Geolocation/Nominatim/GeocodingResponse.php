@@ -10,9 +10,9 @@ use StdClass;
 
 
 /**
- * Result received from The Google Geocoding API
+ * Result received from OSM Nominatim API
  *
- * @author Vojtěch Dobeš
+ * @author Jan Martinec
  */
 class GeocodingResponse extends Object
 {
@@ -199,7 +199,7 @@ class GeocodingResponse extends Object
 
 	/**
 	 * Returns TRUE if current Address has any alternatives
-	 * (returned by The Google Geocoding API)
+	 * (returned by OSM Nominatim API)
 	 *
 	 * @return bool
 	 */
@@ -210,7 +210,7 @@ class GeocodingResponse extends Object
 
 	/**
 	 * Returns array of alternative Addresses
-	 * (returned by The Google Geocoding API)
+	 * (returned by OSM Nominatim API)
 	 *
 	 * @return array [# => Address]
 	 */

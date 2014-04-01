@@ -245,16 +245,16 @@ class GeocodingClient extends Object implements IGeocodingService
 	 */
 	protected function stripAddress($address)
 	{
-		$address = preg_replace('/\d{3}\W*\d{2}/', '', $address); // no ZIP codes
+		$address = preg_replace('/\d{3}\W*\d{2}/', '', $address); // no ZIP codes - assuming there is no 5-digit house number
 		$matched = 0;
-		do
+		do // remove all numbers behind the first comma, if any
 		{
 			$address = preg_replace('/,([^\d]*?)([\d]+)/',',\\1',$address, -1, $matched);
 		}
 		while ($matched > 0);
 
-		$address = preg_replace('/(Praha|Brno|Olomouc|Plzeň|Plzen|Ostrava) +\d+/',', \\1', $address, -1, $matched);
-		$address = preg_replace('/,? +,?/', ' ', $address);
+		$address = preg_replace('/(Praha|Brno|Olomouc|Plzeň|Plzen|Ostrava) +\d+/i', ',\\1', $address, -1, $matched); // remove "Praha 3", as this administrative district division is useless to us; worse, not all address points have it!
+		$address = preg_replace('/,? +,?/',' ',$address);
 
 		return $address;
 	}

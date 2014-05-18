@@ -23,6 +23,7 @@ class GeocodingClient extends Object implements IGeocodingService
 
 	const GOOGLE_URL = 'http://maps.googleapis.com/maps/api/geocode/json?';
 
+	private $viewportBias = null;
 
 	/**
 	 * Get GPS position for given address
@@ -140,6 +141,35 @@ class GeocodingClient extends Object implements IGeocodingService
 	}
 
 	/**
+	 * Set the geocoder to bias on a "rectangle" defined by two Position "corners";
+	 *  following queries will prefer the viewport set this way.
+	 *  Note that there are always two areas likely to be defined this way (see the links);
+	 *  choosing the correct one is up to the implementation.
+	 *
+	 * @see http://stackoverflow.com/questions/23084764/draw-rectangle-on-map-given-two-opposite-coordinates-determine-which-ones-ar#comment35283253_23084764
+	 * @see http://i.piskvor.org/test/which.png
+	 * @see http://i.piskvor.org/test/which2.png
+	 *
+	 * @param Position $corner1
+	 * @param Position $corner2
+	 * @return boolean true if region biasing is available, false otherwise
+	 */
+	public function setBias(Position $corner1, Position $corner2) {
+		$this->viewportBias = array($corner1,$corner2);
+	}
+
+
+	/**
+	 * Reset the bias set by setBias; following queries will not have a preferred viewport
+	 *
+	 * @return void
+	 */
+	public function unsetBias() {
+		$this->viewportBias = null;
+	}
+
+
+	/**
 	 * Executes query on The Google Geocoding API
 	 *
 	 * @param  string
@@ -153,6 +183,20 @@ class GeocodingClient extends Object implements IGeocodingService
 		{
 			$options['sensor'] = $options['sensor'] ? 'true' : 'false';
 		}
+
+		if (is_array($this->viewportBias) && (count($this->viewportBias) == 2)) {
+			/** @var Position $corner1 */
+			$corner1  = $this->viewportBias[0];
+			/** @var Position $corner2 */
+			$corner2  = $this->viewportBias[1];
+			/** @see https://developers.google.com/maps/documentation/geocoding/#Viewports */
+			$options['bounds'] = (
+				$corner1->latitude . ',' . $corner1->longitude
+				. '|'
+				. $corner2->latitude . ',' . $corner2->longitude
+			);
+		}
+
 		$url = self::GOOGLE_URL . http_build_query($options);
 
 		$curl = curl_init();

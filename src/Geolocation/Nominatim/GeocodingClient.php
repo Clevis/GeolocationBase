@@ -162,6 +162,34 @@ class GeocodingClient extends Object implements IGeocodingService
 	}
 
 	/**
+	 * Set the geocoder to bias on a "rectangle" defined by two Position "corners";
+	 *  following queries will prefer the viewport set this way.
+	 *  Note that there are always two areas likely to be defined this way (see the links);
+	 *  choosing the correct one is up to the implementation.
+	 *
+	 * @see http://stackoverflow.com/questions/23084764/draw-rectangle-on-map-given-two-opposite-coordinates-determine-which-ones-ar#comment35283253_23084764
+	 * @see http://i.piskvor.org/test/which.png
+	 * @see http://i.piskvor.org/test/which2.png
+	 *
+	 * @param Position $corner1
+	 * @param Position $corner2
+	 * @return boolean true if region biasing is available, false otherwise
+	 */
+	public function setBias(Position $corner1, Position $corner2) {
+		$this->viewport_bias = array($corner1,$corner2);
+	}
+
+
+	/**
+	 * Reset the bias set by setBias; following queries will not have a preferred viewport
+	 *
+	 * @return void
+	 */
+	public function unsetBias() {
+		$this->viewport_bias = null;
+	}
+
+	/**
 	 * Executes query on OSM Nominatim API
 	 *
 	 * @param  string
@@ -178,6 +206,20 @@ class GeocodingClient extends Object implements IGeocodingService
 		else
 		{
 			$method = 'search';
+		}
+
+		if (is_array($this->viewport_bias) && (count($this->viewport_bias) == 2)) {
+			/** @var Position $corner1 */
+			$corner1  = $this->viewport_bias[0];
+			/** @var Position $corner2 */
+			$corner2  = $this->viewport_bias[1];
+			/** @see http://wiki.openstreetmap.org/wiki/Nominatim */
+			$options['viewbox'] = (
+				$corner1->latitude . ',' . $corner1->longitude
+				. ','
+				. $corner2->latitude . ',' . $corner2->longitude
+			);
+			$options['bounded'] = '1';
 		}
 
 		$options['format'] = 'json';
@@ -229,7 +271,7 @@ class GeocodingClient extends Object implements IGeocodingService
 		}
 		if ($response_code != 200)
 		{
-			throw new InvalidStatusException("Geocoding query failed (status: '{$payload->status}').");
+			throw new InvalidStatusException("Geocoding query failed (status: '" . $response_code . "').");
 		}
 
 		return new GeocodingResponse($this, $payload, $options);
@@ -253,7 +295,7 @@ class GeocodingClient extends Object implements IGeocodingService
 		}
 		while ($matched > 0);
 
-		$address = preg_replace('/(Praha|Brno|Olomouc|Plzeň|Plzen|Ostrava) +\d+/i', ',\\1', $address, -1, $matched); // remove "Praha 3", as this administrative district division is useless to us; worse, not all address points have it!
+		$address = preg_replace('/(Praha|Brno|Olomouc|Plzeň|Plzen|Ostrava|Pardubice) +\d+/i', ',\\1', $address, -1, $matched); // remove "Praha 3", as this administrative district division is useless to us; worse, not all address points have it!
 		$address = preg_replace('/,? +,?/',' ',$address);
 
 		return $address;

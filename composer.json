@@ -15,7 +15,7 @@
 	},
 	"require-dev": {
 		"nette/tester": "@dev",
-		"nette/nette": "@dev",
+		"nette/nette": "2.1.*",
 		"dg/dibi": "@dev"
 	},
 

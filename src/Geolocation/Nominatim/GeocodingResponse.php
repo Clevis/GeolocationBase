@@ -136,7 +136,12 @@ class GeocodingResponse extends Object
 	 */
 	public function getFormatedAddress()
 	{
-		return $this->result->display_name; // returns ugly addresses in CZ - @TODO: FIXME maybe?
+		$a = $this->components;
+		$prahaCislo = ($a['postcode']{0} == '1' ? (' '.$a['postcode']{1}) : '');
+		//nominatim občas vraci místo baráků různé pomníky,obchody,apod.. - pak chybí house_number
+		$string = @"$a[road]$a[pedestrian] $a[house_number], $a[city]" . $prahaCislo;
+		return $string;
+		//return $this->result->display_name; // returns ugly addresses in CZ - @TODO: FIXME maybe?
 	}
 
 	/**

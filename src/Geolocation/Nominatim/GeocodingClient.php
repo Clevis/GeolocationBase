@@ -46,6 +46,9 @@ class GeocodingClient extends Object implements IGeocodingService
 	/** @var string  User-Agent string; required! */
 	protected $ua = 'ReKolaSMS http://rekola.cz/ info@rekola.cz 1.0 2014-01-07';
 
+	private $viewportBias = null;
+
+
 	/**
 	 * allows use of other nominatims
 	 */
@@ -176,7 +179,7 @@ class GeocodingClient extends Object implements IGeocodingService
 	 * @return boolean true if region biasing is available, false otherwise
 	 */
 	public function setBias(Position $corner1, Position $corner2) {
-		$this->viewport_bias = array($corner1,$corner2);
+		$this->viewportBias = array($corner1,$corner2);
 	}
 
 
@@ -186,7 +189,7 @@ class GeocodingClient extends Object implements IGeocodingService
 	 * @return void
 	 */
 	public function unsetBias() {
-		$this->viewport_bias = null;
+		$this->viewportBias = null;
 	}
 
 	/**
@@ -208,11 +211,11 @@ class GeocodingClient extends Object implements IGeocodingService
 			$method = 'search';
 		}
 
-		if (is_array($this->viewport_bias) && (count($this->viewport_bias) == 2)) {
+		if (is_array($this->viewportBias) && (count($this->viewportBias) == 2)) {
 			/** @var Position $corner1 */
-			$corner1  = $this->viewport_bias[0];
+			$corner1  = $this->viewportBias[0];
 			/** @var Position $corner2 */
-			$corner2  = $this->viewport_bias[1];
+			$corner2  = $this->viewportBias[1];
 			/** @see http://wiki.openstreetmap.org/wiki/Nominatim */
 			$options['viewbox'] = (
 				$corner1->latitude . ',' . $corner1->longitude

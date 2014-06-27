@@ -100,6 +100,22 @@ class Position extends Object
 	}
 
 	/**
+	 * Checks whether two positions are identical
+	 *
+	 * @param Position $position
+	 * @return bool
+	 */
+	public function isSame(Position $position)
+	{
+		return (
+			$this->latitude === $position->latitude &&
+			$this->longitude === $position->longitude &&
+			$this->z === $position->z &&
+			$this->planetRadius === $position->planetRadius
+		);
+	}
+
+	/**
 	 * Returns a circle centered at this position
 	 *
 	 * @param float

@@ -137,7 +137,7 @@ class GeocodingResponse extends Object
 	public function getFormatedAddress()
 	{
 		$a = $this->components;
-		$prahaCislo = ($a['postcode']{0} == '1' ? (' '.$a['postcode']{1}) : '');
+		$prahaCislo = (isset($a['postcode']) && $a['postcode']{0} == '1' ? (' '.$a['postcode']{1}) : '');
 		//nominatim občas vraci místo baráků různé pomníky,obchody,apod.. - pak chybí house_number
 		$string = @"$a[road]$a[pedestrian] $a[house_number], $a[city]" . $prahaCislo;
 		return $string;

@@ -31,10 +31,10 @@ use Clevis\Geolocation\InvalidResponseException;
 class GeocodingClient extends Object implements IGeocodingService
 {
 
-	protected $base_url = 'http://nominatim.limes.dyndns.org:19401/'; // use our own nominatim instance, instead of the public one
+	protected $base_url = 'http://nominatim.limes.dyndns.org/'; // use the public nominatim instance
 
-	protected $user_name = 'rekolacz'; // set to empty for "no HTTP auth required"
-	protected $user_pwd = 'rekolacz';
+	protected $user_name = ''; // set to empty for "no HTTP auth required"
+	protected $user_pwd = '';
 
 	protected $email = 'info@rekola.cz'; // needed in case of capacity problems (not in case of own instance)
 	protected $ua = 'ReKolaSMS http://rekola.cz/ info@rekola.cz 1.0 2014-01-07'; // User-Agent string; required!

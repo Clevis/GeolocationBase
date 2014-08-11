@@ -31,7 +31,7 @@ use Clevis\Geolocation\InvalidResponseException;
 class GeocodingClient extends Object implements IGeocodingService
 {
 
-	protected $base_url = 'http://nominatim.limes.dyndns.org/'; // use the public nominatim instance
+	protected $base_url = 'http://nominatim.openstreetmap.org'; // use the public nominatim instance
 
 	protected $user_name = ''; // set to empty for "no HTTP auth required"
 	protected $user_pwd = '';
